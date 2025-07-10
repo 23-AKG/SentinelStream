@@ -1,0 +1,245 @@
+{
+  "https://blog.talosintelligence.com/asus-and-adobe-vulnerabilities/": {
+    "title": "Asus and Adobe vulnerabilities",
+    "link": "https://blog.talosintelligence.com/asus-and-adobe-vulnerabilities/",
+    "summary": "- Nature or type of threat:\n\t* Remote code execution vulnerabilities in Asus Armoury Crate and Adobe Acrobat\n\t* Potential for attackers to execute malicious code on affected systems\n- Affected targets or sectors:\n\t* Asus Armoury Crate: potentially affecting millions of Asus computer users worldwide\n\t* Adobe Acrobat: potentially affecting organizations and individuals using the software for PDF creation and editing\n- Known IOCs or techniques used:\n\t* None specified in the article, as the vulnerabilities are still being analyzed and disclosed\n\nNote: IOCs (Indicators of Compromise) are specific pieces of data or patterns that can indicate a potential security threat. Techniques refer to the methods used by attackers to exploit vulnerabilities.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:18:06.529656"
+    }
+  },
+  "https://blog.talosintelligence.com/microsoft-patch-tuesday-july-2025/": {
+    "title": "Microsoft Patch Tuesday for July 2025 \u2014 Snort rules and prominent vulnerabilities",
+    "link": "https://blog.talosintelligence.com/microsoft-patch-tuesday-july-2025/",
+    "summary": "\u2022 Nature or type of threat: Vulnerabilities in various Microsoft products.\n- Affected targets or sectors: Microsoft products, including Windows, Office, and Azure.\n- Known IOCs or techniques used: None specified in the article.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:18:29.913309"
+    }
+  },
+  "https://blog.talosintelligence.com/a-message-from-bruce-the-mechanical-shark/": {
+    "title": "A message from Bruce the mechanical shark",
+    "link": "https://blog.talosintelligence.com/a-message-from-bruce-the-mechanical-shark/",
+    "summary": "* Nature or type of threat: Saltwater environment\n\t+ Affected targets or sectors: Marine ecosystems and coastal communities\n\t+ Known IOCs or techniques used: Saltwater-based attacks, such as coral reef exploitation and ocean floor cable tampering\n* Nature or type of threat: Cyberattacks\n\t+ Affected targets or sectors: Critical infrastructure, businesses, and individuals\n\t+ Known IOCs or techniques used: Advanced persistent threats (APTs), phishing attacks, and malware infections\n* Nature or type of threat: Human error\n\t+ Affected targets or sectors: All areas of society\n\t+ Known IOCs or techniques used: Social engineering tactics, such as pretexting and baiting\n* Nature or type of threat: Physical security breaches\n\t+ Affected targets or sectors: Government facilities, data centers, and other high-security locations\n\t+ Known IOCs or techniques used: Physical tampering, tailgating, and insider threats",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:19:15.499647"
+    }
+  },
+  "https://blog.talosintelligence.com/pdfs-portable-documents-or-perfect-deliveries-for-phish/": {
+    "title": "PDFs: Portable documents, or perfect deliveries for phish?",
+    "link": "https://blog.talosintelligence.com/pdfs-portable-documents-or-perfect-deliveries-for-phish/",
+    "summary": "- Nature of threat: Callback phishing, also known as TOAD (Telephony-Oriented Attack Delivery) attacks\n\t* Affected targets: Organizations and individuals using VoIP (Voice over Internet Protocol) services\n\t* Known IOCs (Indicators of Compromise): Suspicious VoIP calls or messages with unknown origins, unsolicited phone numbers or missed calls from unusual numbers, caller ID spoofing\n- Nature of threat: Leveraging PDFs for phishing attacks\n\t* Affected targets: Users who open or interact with PDF files\n\t* Known IOCs: PDF files containing suspicious links, macros or forms that prompt users to provide sensitive information\n- Nature of threat: QR code tricks for phishing attacks\n\t* Affected targets: Users who scan or interact with QR codes\n\t* Known IOCs: QR codes displaying suspicious URLs or content that prompt users to provide sensitive information\n- Sector affected: All sectors using VoIP services, as well as individuals using PDF files and QR code technology.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:20:01.656883"
+    }
+  },
+  "https://blog.talosintelligence.com/getting-a-career-in-cybersecurity-isnt-easy-but-this-can-help/": {
+    "title": "Getting a career in cybersecurity isn\u2019t easy, but this can help",
+    "link": "https://blog.talosintelligence.com/getting-a-career-in-cybersecurity-isnt-easy-but-this-can-help/",
+    "summary": "- Nature of threat: Cybercriminal use of artificial intelligence (AI) in attacks\n\t* Affected targets or sectors: All sectors and organizations, including small businesses and individuals\n\t* Known IOCs or techniques used: Abuse of AI to launch more sophisticated phishing, spear phishing, and other types of attacks\n- Nature of threat: Unique path into cybersecurity\n\t* Affected targets or sectors: Individuals seeking to break into the cybersecurity field\n\t* Known IOCs or techniques used: Honest advice and guidance on how to break into the field, including building a strong foundation in computer science and networking, and gaining relevant experience through internships and volunteer work\n- Nature of threat: Cybercriminals' abuse of AI to launch more sophisticated attacks\n\t* Affected targets or sectors: All sectors and organizations, including small businesses and individuals\n\t* Known IOCs or techniques used: Use of machine learning algorithms to create highly targeted and convincing phishing emails, as well as the use of generative adversarial networks (GANs) to create synthetic data that is difficult to distinguish from real data in security monitoring tools.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:20:55.026580"
+    }
+  },
+  "https://blog.talosintelligence.com/decrement-by-one-to-rule-them-all/": {
+    "title": "Decrement by one to rule them all: AsIO3.sys driver exploitation",
+    "link": "https://blog.talosintelligence.com/decrement-by-one-to-rule-them-all/",
+    "summary": "- Nature or type of threat: Vulnerabilities in a kernel-mode driver\n- Affected targets or sectors: All versions of Windows operating systems (7, 8, 8.1, and 10)\n- Known IOCs or techniques used:\n\t+ Code injection via specially crafted audio files\n\t+ Elevated privileges for an attacker to take control of the system\n\t+ Potential for remote code execution, allowing an attacker to execute arbitrary code on the target system.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:21:24.903445"
+    }
+  },
+  "https://blog.talosintelligence.com/cybercriminal-abuse-of-large-language-models/": {
+    "title": "Cybercriminal abuse of large language models",
+    "link": "https://blog.talosintelligence.com/cybercriminal-abuse-of-large-language-models/",
+    "summary": "- Nature or type of threat: Cybercriminal abuse of large language models (LLMs) to conduct various malicious activities such as phishing, spear phishing, and social engineering attacks.\n\n* Affected targets or sectors: Large language models are being targeted by cybercriminals in various industries, including finance, healthcare, government, and technology.\n* Known IOCs or techniques used: Cybercriminals are using a variety of tactics to abuse LLMs, such as manipulating language patterns, creating convincing messages or content, and exploiting vulnerabilities in LLM systems. Some known techniques include:\n\t+ Creating sophisticated and convincing phishing emails that use LLMs to generate natural-sounding text.\n\t+ Using LLMs to create fake news articles, social media posts, or other types of content designed to deceive or manipulate users.\n\t+ Exploiting vulnerabilities in LLM systems to gain unauthorized access to sensitive data or systems.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:22:08.909733"
+    }
+  },
+  "https://blog.talosintelligence.com/a-week-with-a-smart-car/": {
+    "title": "A week with a \"smart\" car",
+    "link": "https://blog.talosintelligence.com/a-week-with-a-smart-car/",
+    "summary": "- Nature of threat: Vehicle hacking and control exploitation\n\t* Affected targets or sectors: Modern vehicles and their passengers\n\t* Known IOCs or techniques used: Unknown at the time of the article, but likely to include techniques such as password cracking, man-in-the-middle attacks, and firmware reverse engineering.\n\n- Nature of threat: In-vehicle infotainment system vulnerabilities\n\t* Affected targets or sectors: Cars and their passengers\n\t* Known IOCs or techniques used: Vulnerabilities in the infotainment system software, potentially exploited through phishing attacks or malware distribution.\n\n- Nature of threat: Wireless charging station security risks\n\t* Affected targets or sectors: Electric vehicles and their wireless charging infrastructure\n\t* Known IOCs or techniques used: Unknown at the time of the article, but likely to include techniques such as malware injection and eavesdropping.\n\n- Nature of threat: Autonomous driving system security risks\n\t* Affected targets or sectors: Self-driving cars and their passengers\n\t* Known IOCs or techniques used: Unknown at the time of the article, but likely to include techniques such as spoofing attacks and unauthorized access to sensor data.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:23:01.657711"
+    }
+  },
+  "https://blog.talosintelligence.com/when-legitimate-tools-go-rogue/": {
+    "title": "When legitimate tools go rogue",
+    "link": "https://blog.talosintelligence.com/when-legitimate-tools-go-rogue/",
+    "summary": "- Nature or type of threat: Social engineering attacks using legitimate tools\n\t* Affected targets or sectors: IT, security, and other business teams\n\t* Known IOCs or techniques used: Phishing emails, pretexting, and impersonation attacks\n\n- Nature or type of threat: Lateral movement and command and control abuse\n\t* Affected targets or sectors: Network administrators and IT operations teams\n\t* Known IOCs or techniques used: Using legitimate tools to move laterally within a network, and using command and control channels to communicate with attacker-controlled systems\n\n- Nature or type of threat: Use of legitimate tools for malicious purposes\n\t* Affected targets or sectors: All industries and organizations that use IT systems\n\t* Known IOCs or techniques used: Using legitimate tools to conduct activities such as data exfiltration, ransomware attacks, and denial-of-service attacks.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:23:42.388807"
+    }
+  },
+  "https://blog.talosintelligence.com/python-version-of-golangghost-rat/": {
+    "title": "Famous Chollima deploying Python version of GolangGhost RAT",
+    "link": "https://blog.talosintelligence.com/python-version-of-golangghost-rat/",
+    "summary": "\u2022 Nature or type of threat:\n\n- Python-based RAT (Remote Access Tool)\n- New variant of the GolangGhost RAT\n\n\u2022 Affected targets or sectors:\n\n- Cryptocurrency and blockchain jobseekers\n- Users primarily in India\n\n\u2022 Known IOCs or techniques used:\n\n- Unknown at this time",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:24:12.024128"
+    }
+  },
+  "https://blog.talosintelligence.com/know-thyself-know-thy-environment/": {
+    "title": "Know thyself, know thy environment",
+    "link": "https://blog.talosintelligence.com/know-thyself-know-thy-environment/",
+    "summary": "\u2022 Nature or type of threat: Social engineering attacks\n\t+ Affected targets or sectors: Human resources, finance, and IT departments\n\t+ Known IOCs or techniques used: Phishing emails, pretexting, and baiting\n\u2022 Nature or type of threat: Ransomware\n\t+ Affected targets or sectors: Healthcare, education, and financial institutions\n\t+ Known IOCs or techniques used: Email attachments, infected software downloads, and exploitation of vulnerabilities\n\u2022 Nature or type of threat: Advanced persistent threats (APTs)\n\t+ Affected targets or sectors: Government agencies, defense contractors, and critical infrastructure providers\n\t+ Known IOCs or techniques used: Customized malware, remote access trojans, and lateral movement tactics\n\u2022 Nature or type of threat: Nation-state attacks\n\t+ Affected targets or sectors: Political organizations, government agencies, and defense contractors\n\t+ Known IOCs or techniques used: Customized malware, exploitation of vulnerabilities, and spear phishing attacks",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:24:57.157799"
+    }
+  },
+  "https://blog.talosintelligence.com/catdoc-zero-day-nvidia-high-logic-fontcreator-and-parallel-vulnerabilities/": {
+    "title": "catdoc zero-day, NVIDIA, High-Logic FontCreator and Parallel vulnerabilities",
+    "link": "https://blog.talosintelligence.com/catdoc-zero-day-nvidia-high-logic-fontcreator-and-parallel-vulnerabilities/",
+    "summary": "Here are the three zero-day vulnerabilities in catdoc:\n\n* Nature of threat: Zero-day exploit\n* Affected targets or sectors: Software applications using catdoc\n* Known IOCs or techniques used: None disclosed by Cisco Talos\n\nHere are the vulnerabilities in Parallel, NVIDIA and High-Logic FontCreator 15:\n\n* Nature of threat: Software vulnerabilities\n* Affected targets or sectors: Various industries and organizations using these products\n* Known IOCs or techniques used: None disclosed by Cisco Talos",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:25:35.015991"
+    }
+  },
+  "https://blog.talosintelligence.com/microsoft-patch-tuesday-june-2025/": {
+    "title": "Microsoft Patch Tuesday for June\u00a02025 \u2014 Snort rules and prominent vulnerabilities",
+    "link": "https://blog.talosintelligence.com/microsoft-patch-tuesday-june-2025/",
+    "summary": "- Nature or type of threat: Critical and important vulnerabilities in various Microsoft products\n\t* Affected targets or sectors: Windows operating systems, Office applications, and other Microsoft software\n\t* Known IOCs or techniques used: None specified in the article\n\n- Nature or type of threat: Remote code execution vulnerabilities in Azure IoT Hub and Azure Event Grid\n\t* Affected targets or sectors: Internet of Things (IoT) devices and systems\n\t* Known IOCs or techniques used: None specified in the article\n\n- Nature or type of threat: Security feature bypass vulnerability in Microsoft Office\n\t* Affected targets or sectors: Office applications on Windows and macOS\n\t* Known IOCs or techniques used: None specified in the article",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:26:15.194150"
+    }
+  },
+  "https://blog.talosintelligence.com/everyones-on-the-cyber-target-list/": {
+    "title": "Everyone's on the cyber target list",
+    "link": "https://blog.talosintelligence.com/everyones-on-the-cyber-target-list/",
+    "summary": "- Nature or type of threat: Newly discovered malware, PathWiper\n* Affected targets or sectors: Unaffiliated organizations, including small businesses, educational institutions, and non-profit organizations\n* Known IOCs or techniques used: None mentioned in the article\n\n- Nature or type of threat: Existing vulnerabilities exploited by attackers\n* Affected targets or sectors: Everyone, regardless of industry or affiliation\n* Known IOCs or techniques used: Various, including phishing emails, drive-by downloads, and remote access trojans (RATs)\n\n- Nature or type of threat: Social engineering attacks on human vulnerabilities\n* Affected targets or sectors: Everyone, as social engineering tactics can be applied to any individual or organization\n* Known IOCs or techniques used: None mentioned in the article\n\n- Nature or type of threat: Advanced persistent threats (APTs) targeting specific industries or organizations\n* Affected targets or sectors: Industries or organizations with sensitive data or assets, such as finance, healthcare, and government\n* Known IOCs or techniques used: Various, including customized malware, command and control (C2) infrastructure, and spear phishing attacks.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:27:06.793890"
+    }
+  },
+  "https://blog.talosintelligence.com/pathwiper-targets-ukraine/": {
+    "title": "Newly identified wiper malware \u201cPathWiper\u201d targets critical infrastructure in Ukraine",
+    "link": "https://blog.talosintelligence.com/pathwiper-targets-ukraine/",
+    "summary": "\u2022 Nature or type of threat: PathWiper is a wiper malware that targets critical infrastructure in Ukraine.\n- Affected targets or sectors: The attack was observed on a critical infrastructure entity within Ukraine, but the article does not provide more specific information about the target.\n- Known IOCs or techniques used: Cisco Talos has not provided any known IOCs (Indicators of Compromise) or techniques used by PathWiper in the article.",
+    "iocs": {
+      "ipv4": [],
+      "url": [],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:27:36.173201"
+    }
+  },
+  "https://unit42.paloaltonetworks.com/preventing-clickfix-attack-vector/": {
+    "title": "Fix the Click: Preventing the ClickFix Attack Vector",
+    "link": "https://unit42.paloaltonetworks.com/preventing-clickfix-attack-vector/",
+    "summary": "\u2022 Nature of threat: Malware distribution campaigns through deceptive tactics such as ClickFix attacks.\n\u2022 Affected targets or sectors: Endpoints, organizations, and individuals in various industries.\n\u2022 Known IOCs or techniques used: Distributed malware such as NetSupport RAT, Latrodectus, and Lumma Stealer; use of deceptive tactics like ClickFix to trick users into installing malware.",
+    "iocs": {
+      "ipv4": [],
+      "url": [
+        "https://unit42.paloaltonetworks.com/preventing-clickfix-attack-vector/",
+        "https://unit42.paloaltonetworks.com"
+      ],
+      "hash": []
+    },
+    "llm_meta": {
+      "model": "llama2",
+      "prompt_version": "v1.0",
+      "generated_on": "2025-07-10T17:28:19.249721"
+    }
+  }
+}

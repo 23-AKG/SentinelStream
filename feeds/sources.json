@@ -1,0 +1,14 @@
+[
+  "https://blog.talosintelligence.com/rss/",  
+  "https://unit42.paloaltonetworks.com/feed/",
+  "https://research.checkpoint.com/feed/", 
+  "https://securelist.com/feed/",        
+  "https://feeds.feedburner.com/TheHackersNews", 
+  "https://www.bleepingcomputer.com/feed/",  
+  "https://threatpost.com/feed/",             
+  "https://www.darkreading.com/rss.xml",                    
+  "https://www.ic3.gov/Media/Y2024/RSS/IC3Alerts.xml",  
+  "https://www.cisa.gov/news.xml",                         
+  "https://us-cert.cisa.gov/ncas/alerts.xml",   
+  "https://malpedia.caad.fkie.fraunhofer.de/rss" 
+]
