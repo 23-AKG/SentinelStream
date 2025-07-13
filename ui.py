@@ -49,7 +49,7 @@ def check_if_malicious(selected_feed, user_input):
         return f"✅ `{user_input}` is **Safe** in {selected_feed}."
     
 def generate_pagination_html(current_page, total_pages, display_range=5):
-    html = "<div style='text-align:center; margin-top: 10px;'>"
+    html = "<div style='text-align:center; margin: 10px 0;'>"
     start = max(0, current_page - display_range // 2)
     end = min(total_pages, start + display_range)
 
@@ -58,15 +58,16 @@ def generate_pagination_html(current_page, total_pages, display_range=5):
 
     for i in range(start, end):
         if i == current_page:
-            html += f"<button disabled style='font-weight:bold; margin:2px;'>{i+1}</button>"
+            html += f"<button disabled style='font-weight:bold; background: #4faaff; color: black; margin:2px; padding: 4px 8px; border-radius: 4px;'>{i+1}</button>"
         else:
-            html += f"<button onclick='document.querySelector(\"#page_state input\").value={i}; document.querySelector(\"#update_cards\").click();' style='margin:2px;'>{i+1}</button>"
+            html += f"<button onclick='document.querySelector(\"#page_state input\").value={i}; document.querySelector(\"#update_cards\").click();' style='margin:2px; padding: 4px 8px; border-radius: 4px;'>{i+1}</button>"
 
     if end < total_pages:
         html += f" <button onclick='document.querySelector(\"#page_state input\").value={current_page + 1}; document.querySelector(\"#update_cards\").click();'>&raquo;</button>"
 
     html += "</div>"
     return html
+
 
 
 def load_json(path):
@@ -108,13 +109,23 @@ def export_iocs(title, url, ipv4, urls, hashes):
     return temp_path
 
 def download_ioc_file(trigger_title):
+    print(f"[DEBUG] Trigger title from dropdown: {trigger_title}")
     summaries = load_summaries()
     ioc_index = load_ioc_index()
     for url, entry in summaries.items():
         if entry["title"] == trigger_title:
             iocs = ioc_index.get(url, {})
-            return export_iocs(entry["title"], url, iocs.get("ipv4", []), iocs.get("url", []), iocs.get("hash", []))
+            print(f"[DEBUG] Found entry. Exporting IOCs for: {entry['title']}")
+            path = export_iocs(entry["title"], url, iocs.get("ipv4", []), iocs.get("url", []), iocs.get("hash", []))
+            if os.path.exists(path):
+                print(f"[INFO] File created at: {path}")
+                return path
+            else:
+                print("[ERROR] File export failed or path missing.")
+                return None
+    print(f"[WARN] No matching title found for: {trigger_title}")
     return None
+
 
 def get_source_tag(link):
     return "GitHub" if "github" in link else "RSS"
@@ -179,11 +190,35 @@ def generate_cards(summaries, ioc_index, query, sort_order, page):
     pagination = generate_pagination_html(page, total_pages)
     return cards, pagination, page
 
+def get_titles_with_iocs_on_page(summaries, ioc_index, query, sort_order, page):
+    if query is None:
+        query = ""
+    if sort_order is None:
+        sort_order = "Newest First"
+
+    filtered = []
+    for url, entry in summaries.items():
+        combined_text = (entry["title"] + entry["summary"]).lower()
+        if query.lower() in combined_text:
+            filtered.append((url, entry))
+
+    reverse = sort_order == "Newest First"
+    filtered.sort(key=lambda x: x[1]["llm_meta"]["generated_on"], reverse=reverse)
+
+    total_pages = max(1, (len(filtered) + ITEMS_PER_PAGE - 1) // ITEMS_PER_PAGE)
+    page = max(0, min(page, total_pages - 1))
+    paged = filtered[page * ITEMS_PER_PAGE:(page + 1) * ITEMS_PER_PAGE]
+
+    return [entry["title"] for url, entry in paged if ioc_index.get(url)]
+
 
 def update_cards(query, sort_order, page):
     summaries = load_summaries()
     ioc_index = load_ioc_index()
-    return generate_cards(summaries, ioc_index, query, sort_order, page)
+    cards_html, pagination_html, new_page = generate_cards(summaries, ioc_index, query, sort_order, page)
+    dropdown_titles = get_titles_with_iocs_on_page(summaries, ioc_index, query, sort_order, new_page)
+    return cards_html, pagination_html, new_page, gr.update(choices=dropdown_titles)
+
 
 def list_articles_with_iocs():
     summaries = load_summaries()
@@ -245,35 +280,51 @@ def build_ui():
             with gr.Row():
                 query = gr.Textbox(label="Search", placeholder="Keyword, threat, actor", scale=2)
                 sort = gr.Radio(choices=["Newest First", "Oldest First"], value="Newest First")
-
-            pagination_html = gr.HTML()
-
-            with gr.Row():
-                prev_btn = gr.Button("⬅️ Prev")
-                next_btn = gr.Button("Next ➡️")
-
-
+            
             html_display = gr.HTML()
+            pagination_html = gr.HTML()
+            
             page_state = gr.Number(value=0, visible=False)
             update_btn = gr.Button(visible=False, elem_id="update_cards")
 
-            query.change(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
-            sort.change(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
-            next_btn.click(lambda q, s, p: update_cards(q, s, p + 1), inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
-            prev_btn.click(lambda q, s, p: update_cards(q, s, p - 1), inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
-            update_btn.click(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
-            app.load(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
+            # Dropdown and Download
+            with gr.Row():
+                refresh_iocs_btn = gr.Button("🔄 Refresh Article List")
+                ioc_selector = gr.Dropdown(label="Select IOC Article", choices=[], value=None)
 
-            gr.Markdown("---")
-            gr.Markdown("### 📥 Download IOCs from a specific article")
-            ioc_selector = gr.Dropdown(choices=list_articles_with_iocs(), label="Select IOC Article")
             download_btn = gr.Button("📎 Download Selected IOC File")
             download_file = gr.File(label="Your Download", interactive=False, visible=False)
 
-            download_btn.click(download_ioc_file, inputs=ioc_selector, outputs=download_file)
-            download_file.change(lambda x: gr.update(visible=True), inputs=download_file, outputs=download_file)
+            # Summary card logic
+            def handle_download(trigger_title):
+                print(f"[DEBUG] Trigger title from dropdown: {trigger_title}")
+                path = download_ioc_file(trigger_title)
+                if path and os.path.exists(path):
+                    print(f"[INFO] File created at: {path}")
+                    return gr.update(value=path, visible=True)
+                return gr.update(visible=False)
 
-        
+            def hide_file():
+                return gr.update(visible=False)
+
+            query.change(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state, ioc_selector])
+            sort.change(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state, ioc_selector])
+            update_btn.click(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state, ioc_selector])
+            app.load(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state, ioc_selector])
+
+            prev_btn = gr.Button("⬅️ Prev")
+            next_btn = gr.Button("Next ➡️")
+            prev_btn.click(lambda q, s, p: update_cards(q, s, p - 1), inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state, ioc_selector])
+            next_btn.click(lambda q, s, p: update_cards(q, s, p + 1), inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state, ioc_selector])
+
+            gr.Markdown("---")
+            gr.Markdown("### 📥 Download IOCs from a specific article")
+
+            refresh_iocs_btn.click(fn=list_articles_with_iocs, outputs=ioc_selector)
+            download_btn.click(hide_file, outputs=download_file, show_progress=False)
+            download_btn.click(handle_download, inputs=ioc_selector, outputs=download_file)
+
+
         with gr.Tab("📝 Analyze My Article"):
             gr.Markdown("Paste a link to any threat article below to extract title, summary, and IOCs.")
 
