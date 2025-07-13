@@ -102,7 +102,7 @@ python ui.py
 ---
 ## 📽️ Demo Video
 
-[![Watch the demo](https://img.youtube.com/vi/yzgUi-iq5Xk/0.jpg)]((https://youtu.be/yzgUi-iq5Xk))
+[![Watch the demo](https://img.youtube.com/vi/yzgUi-iq5Xk/0.jpg)](([https://youtu.be/yzgUi-iq5Xk](https://www.youtube.com/watch?v=yzgUi-iq5Xk))
 
 ---
 
