@@ -352,9 +352,9 @@ def build_ui():
                     paragraphs = soup.find_all('p')
                     content = "\n".join(p.get_text() for p in paragraphs)
                     if not content.strip():
-                        return "❌ No readable content found", "", ""
+                        return "❌ No readable content found", "", gr.update(visible=False)
                 except Exception as e:
-                    return f"❌ Failed to fetch article: {e}", "", ""
+                    return f"❌ Failed to fetch article: {e}", "", gr.update(visible=False)
 
                 summary = summarize_with_gemini(content, url)
                 iocs = extract_iocs(content)
@@ -377,14 +377,13 @@ def build_ui():
                         for typ, items in iocs.items():
                             if items:
                                 f.write(f"\n{typ.upper()}:\n" + "\n".join(items))
+                    return summary, details_html, gr.update(value=temp_path, visible=True)
                 except Exception as e:
                     print(f"❌ Failed to write IOCs file: {e}")
-                    temp_path = ""
+                    return summary, details_html, gr.update(visible=False)
 
-                return summary, details_html, temp_path
 
             analyze_btn.click(analyze_link, inputs=[user_article_url], outputs=[output_summary, output_iocs, download_user_ioc])
-            download_user_ioc.change(lambda x: gr.update(visible=True), inputs=download_user_ioc, outputs=download_user_ioc)
         # 🔹 Pipeline Refresh Section
         with gr.Accordion("🔁 Refresh Feeds + Re-Summarize", open=False):
             gr.Markdown("Will re-fetch feeds and re-run summaries using Ollama.")
