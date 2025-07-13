@@ -89,9 +89,6 @@ API_KEY = "your-gemini-api-key"
 ```bash
 python ui.py
 ```
-
-Visit: [http://127.0.0.1:7860](http://127.0.0.1:7860)
-
 ---
 
 ## 📌 Usage
