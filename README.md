@@ -22,12 +22,6 @@ SentinelStream is a full-stack threat intelligence dashboard built to empower SO
 
 ---
 
-## 🖥️ Demo Screenshot
-
-![SentinelStream Screenshot](https://via.placeholder.com/900x400?text=Insert+UI+Screenshot+Here)
-
----
-
 ## 📂 Folder Structure
 
 ```
