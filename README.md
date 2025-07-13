@@ -100,11 +100,16 @@ python ui.py
 - **Pipeline Refresh** — Re-fetch all sources and regenerate data
 
 ---
+## 📽️ Demo Video
+
+[![Watch the demo](https://img.youtube.com/vi/yzgUi-iq5Xk/0.jpg)]((https://youtu.be/yzgUi-iq5Xk))
+
+---
 
 ## ⚠️ Limitations
 
 - The **Analyze My Article** tab is under development; summarization and IOC extraction are partially functional.
-- Flat-file JSON storage (no DB) — not optimized for scale.
+- Flat-file JSON storage (Didn't go with a DB for the MVP stage) — not optimized for scale.
 - Requires manual Gemini API key insertion for now.
 
 ---
