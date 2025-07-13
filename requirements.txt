@@ -3,3 +3,5 @@ gradio
 weasyprint
 markdown2
 requests
+google-generativeai
+beautifulsoup4

@@ -1587,5 +1587,12 @@
     "published": "Thu, 10 Jul 2025 18:36:09 GMT",
     "content": "The UK's National Crime Agency arrested four people, who some experts believe are connected to the notorious cybercriminal collective known as Scattered Spider.",
     "source": "https://www.darkreading.com/rss.xml"
+  },
+  "https://thehackernews.com/2025/07/gpuhammer-new-rowhammer-attack-variant.html": {
+    "title": "GPUHammer: New RowHammer Attack Variant Degrades AI Models on NVIDIA GPUs",
+    "link": "https://thehackernews.com/2025/07/gpuhammer-new-rowhammer-attack-variant.html",
+    "published": "Sat, 12 Jul 2025 22:44:00 +0530",
+    "content": "NVIDIA is urging customers to enable System-level Error Correction Codes (ECC) as a defense against a variant of a RowHammer attack demonstrated against its graphics processing units (GPUs).\n\"Risk of successful exploitation from RowHammer attacks varies based on DRAM device, platform, design specification, and system settings,\" the GPU maker said in an advisory released this week.\nDubbed",
+    "source": "https://feeds.feedburner.com/TheHackersNews"
   }
 }

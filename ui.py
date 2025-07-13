@@ -1,11 +1,13 @@
 import json
 import os
-import re
 import gradio as gr
 from datetime import datetime
-from collections import defaultdict
+import re
+import tempfile
 
 SUMMARY_PATH = "data/summaries.json"
+IOC_INDEX_PATH = "data/ioc_index.json"
+ITEMS_PER_PAGE = 10
 
 FEED_FILES = {
     "OSINT Threat Feed": "data/osint.txt",
@@ -17,7 +19,6 @@ FEED_FILES = {
     "Bitcoin Address Intel": "data/bitcoin.txt",
     "SHA File Hash Blocklist": "data/sha.txt"
 }
-
 # ================== Utility Functions ===================
 def load_feed_content_partial(feature_name):
     path = FEED_FILES.get(feature_name)
@@ -46,94 +47,162 @@ def check_if_malicious(selected_feed, user_input):
         return f"🚨 `{user_input}` is **Malicious** according to {selected_feed}!"
     else:
         return f"✅ `{user_input}` is **Safe** in {selected_feed}."
+    
+def generate_pagination_html(current_page, total_pages, display_range=5):
+    html = "<div style='text-align:center; margin-top: 10px;'>"
+    start = max(0, current_page - display_range // 2)
+    end = min(total_pages, start + display_range)
 
-# ================ IOC Summary Cards ================
-def load_summaries():
-    if not os.path.exists(SUMMARY_PATH):
+    if start > 0:
+        html += f"<button onclick='document.querySelector(\"#page_state input\").value={current_page - 1}; document.querySelector(\"#update_cards\").click();'>&laquo;</button> "
+
+    for i in range(start, end):
+        if i == current_page:
+            html += f"<button disabled style='font-weight:bold; margin:2px;'>{i+1}</button>"
+        else:
+            html += f"<button onclick='document.querySelector(\"#page_state input\").value={i}; document.querySelector(\"#update_cards\").click();' style='margin:2px;'>{i+1}</button>"
+
+    if end < total_pages:
+        html += f" <button onclick='document.querySelector(\"#page_state input\").value={current_page + 1}; document.querySelector(\"#update_cards\").click();'>&raquo;</button>"
+
+    html += "</div>"
+    return html
+
+
+def load_json(path):
+    if not os.path.exists(path):
         return {}
-    with open(SUMMARY_PATH, "r") as f:
+    with open(path, "r") as f:
         return json.load(f)
+
+def is_valid_summary(text: str) -> bool:
+    if not text.strip():
+        return False
+    return not (
+        "skipped llm summarization" in text.lower()
+        or "no valid summary" in text.lower()
+        or text.strip().startswith("⚠️ Skipped")
+    )
+
+def load_summaries():
+    all_summaries = load_json(SUMMARY_PATH)
+    return {
+        url: entry
+        for url, entry in all_summaries.items()
+        if is_valid_summary(entry.get("summary", ""))
+    }
+
+def load_ioc_index():
+    return load_json(IOC_INDEX_PATH)
+
+def export_iocs(title, url, ipv4, urls, hashes):
+    lines = [f"Title: {title}", f"Link: {url}", "", "IOCs:"]
+    if ipv4: lines += ["\nIPv4:"] + ipv4
+    if urls: lines += ["\nURLs:"] + urls
+    if hashes: lines += ["\nHashes:"] + hashes
+
+    safe_title = re.sub(r"[^a-zA-Z0-9]", "_", title)[:30]
+    temp_path = os.path.join(tempfile.gettempdir(), f"ioc_dump_{safe_title}.txt")
+    with open(temp_path, "w") as f:
+        f.write("\n".join(lines))
+    return temp_path
+
+def download_ioc_file(trigger_title):
+    summaries = load_summaries()
+    ioc_index = load_ioc_index()
+    for url, entry in summaries.items():
+        if entry["title"] == trigger_title:
+            iocs = ioc_index.get(url, {})
+            return export_iocs(entry["title"], url, iocs.get("ipv4", []), iocs.get("url", []), iocs.get("hash", []))
+    return None
 
 def get_source_tag(link):
     return "GitHub" if "github" in link else "RSS"
 
-def group_iocs(iocs):
-    groups = defaultdict(list)
-    for ioc in iocs:
-        if re.match(r"\b\d{1,3}(\.\d{1,3}){3}\b", ioc):
-            groups["IP"].append(ioc)
-        elif re.match(r"^https?://", ioc):
-            groups["URL"].append(ioc)
-        elif re.match(r"^[a-fA-F0-9]{32,}$", ioc):
-            groups["Hash"].append(ioc)
-        else:
-            groups["Other"].append(ioc)
-    return groups
-
-def render_summary_cards(query, sort_order, group_toggle):
-    summaries = load_summaries()
-    entries = []
-
+def generate_cards(summaries, ioc_index, query, sort_order, page):
+    if query is None:
+        query = ""
+    if sort_order is None:
+        sort_order = "Newest First"
+    filtered = []
     for url, entry in summaries.items():
         combined_text = (entry["title"] + entry["summary"]).lower()
-        if query and query.lower() not in combined_text:
-            continue
-        entries.append((url, entry))
+        if query.lower() in combined_text:
+            filtered.append((url, entry))
 
     reverse = sort_order == "Newest First"
-    entries.sort(key=lambda x: x[1]["llm_meta"]["generated_on"], reverse=reverse)
+    filtered.sort(key=lambda x: x[1]["llm_meta"]["generated_on"], reverse=reverse)
 
-    if not entries:
-        return "🚫 No matching summaries found."
+    total_pages = max(1, (len(filtered) + ITEMS_PER_PAGE - 1) // ITEMS_PER_PAGE)
+    page = max(0, min(page, total_pages - 1))
+    paged = filtered[page * ITEMS_PER_PAGE:(page + 1) * ITEMS_PER_PAGE]
 
-    rendered = ""
-    for url, entry in entries:
+    cards = ""
+    for url, entry in paged:
         title = entry["title"]
         summary = entry["summary"]
         source = get_source_tag(entry["link"])
         date = entry["llm_meta"]["generated_on"].split("T")[0]
-        iocs = entry["iocs"]
 
-        if iocs:
-            if group_toggle:
-                grouped = group_iocs(iocs)
-                ioc_html = "".join(
-                    f"<details><summary>{k} ({len(v)})</summary><ul>" +
-                    "".join(f"<li>{item}</li>" for item in v) +
-                    "</ul></details>" for k, v in grouped.items()
-                )
-            else:
-                ioc_html = "<ul>" + "".join(f"<li>{ioc}</li>" for ioc in iocs) + "</ul>"
-            ioc_section = f"<div style='margin-top: 8px; color: limegreen; font-weight: bold;'>✅ IOCs Found</div>{ioc_html}"
+        iocs = ioc_index.get(url, {})
+        ipv4, urls, hashes = iocs.get("ipv4", []), iocs.get("url", []), iocs.get("hash", [])
+        total_iocs = len(ipv4) + len(urls) + len(hashes)
+
+        if total_iocs > 0:
+            ioc_details = ""
+            if ipv4:
+                ioc_details += f"<details><summary>IPv4 ({len(ipv4)})</summary><ul>" + "".join(f"<li>{ip}</li>" for ip in ipv4) + "</ul></details>"
+            if urls:
+                ioc_details += f"<details><summary>URL ({len(urls)})</summary><ul>" + "".join(f"<li>{u}</li>" for u in urls) + "</ul></details>"
+            if hashes:
+                ioc_details += f"<details><summary>Hash ({len(hashes)})</summary><ul>" + "".join(f"<li>{h}</li>" for h in hashes) + "</ul></details>"
+            ioc_display = f"""
+                <div style='margin-top: 8px; color: limegreen;'>✅ {total_iocs} IOCs Found</div>
+                <details><summary>🔍 View IOCs</summary>{ioc_details}</details>
+                <div style='margin-top: 6px; color: orange;'>Select this title below to download</div>
+            """
         else:
-            ioc_section = "<div style='margin-top: 8px; color: gray;'>❌ No IOCs Found</div>"
+            ioc_display = ""
 
-        card_html = f"""
-        <div style='padding: 14px; border-radius: 12px; background: #1f1f1f; margin-bottom: 16px; box-shadow: 0 0 8px rgba(0,0,0,0.5);'>
-            <h3 style='margin-bottom: 0.2em;'>{title}</h3>
+        card = f"""
+        <div style='padding: 14px; border-radius: 12px; background: #1f1f1f; margin-bottom: 16px; box-shadow: 0 0 6px rgba(0,0,0,0.4);'>
+            <h3>{title}</h3>
             <div style='font-size: 0.9em; color: gray;'>{date} • <span style='color: orange;'>{source}</span></div>
-            <p style='margin-top: 1em;'>{summary}</p>
-            {ioc_section}
+            <div style='margin-top: 1em; white-space: pre-wrap;'>{summary}</div>
+
+            {ioc_display}
             <div style='margin-top: 10px;'><a href="{url}" target="_blank" style='color: #4faaff;'>🔗 View Original</a></div>
         </div>
         """
-        rendered += card_html
+        cards += card
 
-    return rendered
+    pagination = generate_pagination_html(page, total_pages)
+    return cards, pagination, page
+
+
+def update_cards(query, sort_order, page):
+    summaries = load_summaries()
+    ioc_index = load_ioc_index()
+    return generate_cards(summaries, ioc_index, query, sort_order, page)
+
+def list_articles_with_iocs():
+    summaries = load_summaries()
+    ioc_index = load_ioc_index()
+    return [entry["title"] for url, entry in summaries.items() if ioc_index.get(url)]
 
 def refresh_pipeline():
     os.system("python3 feeds/fetcher.py && python3 feeds/github_fetcher.py && python3 generate_summaries.py")
     return "✅ Pipeline re-run complete."
 
-# =================== UI =======================
+
 def build_ui():
     with gr.Blocks() as app:
         gr.Markdown("## 🛡️ SentinelStream Dashboard")
-        gr.Markdown("Real-time AI summaries and threat intelligence feed viewer")
+        gr.Markdown("Real-time AI summaries and threat intelligence viewer")
 
+        # 🔹 Feed Overview Tab
         with gr.Tab("📌 Feed Overview"):
             feed_output = gr.Markdown("Click a feature to view top IOCs.")
-
             with gr.Row():
                 b1 = gr.Button("OSINT Threat Feed")
                 b2 = gr.Button("C2 Hunt Feed")
@@ -149,18 +218,20 @@ def build_ui():
             more_button = gr.Button("Show Full Feed in New Tab")
             full_output = gr.Textbox(visible=False)
 
-            # Hook feed buttons
             for button, name in zip([b1, b2, b3, b4, b5, b6, b7, b8], FEED_FILES.keys()):
-                button.click(load_feed_content_partial, inputs=[gr.Textbox(value=name, visible=False)], outputs=feed_output)
-                button.click(fn=lambda x: x, inputs=[gr.Textbox(value=name, visible=False)], outputs=more_input)
+                hidden_input = gr.Textbox(value=name, visible=False)
+                button.click(load_feed_content_partial, inputs=[hidden_input], outputs=feed_output)
+                button.click(fn=lambda x: x, inputs=[hidden_input], outputs=more_input)
 
             more_button.click(load_feed_full, inputs=more_input, outputs=full_output)
 
+        # 🔹 Full Feed View Tab
         with gr.Tab("📖 Full Feed View"):
             gr.Markdown("Below is the full feed content of the last feature you selected:")
             full_view = gr.Markdown()
             more_button.click(load_feed_full, inputs=more_input, outputs=full_view)
 
+        # 🔹 IOC Search Tab
         with gr.Tab("🔍 Search IOC in Feed"):
             gr.Markdown("Check if your IP, URL, hash, or domain is malicious")
             selected_feed = gr.Dropdown(choices=list(FEED_FILES.keys()), label="Select Feed")
@@ -169,25 +240,107 @@ def build_ui():
             result = gr.Markdown()
             search_btn.click(check_if_malicious, inputs=[selected_feed, user_input], outputs=result)
 
+        # 🔹 Summary Cards Tab
         with gr.Tab("🧠 AI Summary Cards"):
             with gr.Row():
-                query = gr.Textbox(placeholder="Search by keyword, threat actor, or IOC", label="Search", scale=2)
-                sort = gr.Radio(choices=["Newest First", "Oldest First"], value="Newest First", label="Sort")
-                group = gr.Checkbox(label="Group IOCs by type (IP, URL, Hash)")
+                query = gr.Textbox(label="Search", placeholder="Keyword, threat, actor", scale=2)
+                sort = gr.Radio(choices=["Newest First", "Oldest First"], value="Newest First")
 
-            results = gr.HTML()
-            query.change(render_summary_cards, inputs=[query, sort, group], outputs=results)
-            sort.change(render_summary_cards, inputs=[query, sort, group], outputs=results)
-            group.change(render_summary_cards, inputs=[query, sort, group], outputs=results)
+            pagination_html = gr.HTML()
 
+            with gr.Row():
+                prev_btn = gr.Button("⬅️ Prev")
+                next_btn = gr.Button("Next ➡️")
+
+
+            html_display = gr.HTML()
+            page_state = gr.Number(value=0, visible=False)
+            update_btn = gr.Button(visible=False, elem_id="update_cards")
+
+            query.change(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
+            sort.change(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
+            next_btn.click(lambda q, s, p: update_cards(q, s, p + 1), inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
+            prev_btn.click(lambda q, s, p: update_cards(q, s, p - 1), inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
+            update_btn.click(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
+            app.load(update_cards, inputs=[query, sort, page_state], outputs=[html_display, pagination_html, page_state])
+
+            gr.Markdown("---")
+            gr.Markdown("### 📥 Download IOCs from a specific article")
+            ioc_selector = gr.Dropdown(choices=list_articles_with_iocs(), label="Select IOC Article")
+            download_btn = gr.Button("📎 Download Selected IOC File")
+            download_file = gr.File(label="Your Download", interactive=False, visible=False)
+
+            download_btn.click(download_ioc_file, inputs=ioc_selector, outputs=download_file)
+            download_file.change(lambda x: gr.update(visible=True), inputs=download_file, outputs=download_file)
+
+        
+        with gr.Tab("📝 Analyze My Article"):
+            gr.Markdown("Paste a link to any threat article below to extract title, summary, and IOCs.")
+
+            user_article_url = gr.Textbox(label="Article URL", placeholder="https://...")
+
+            analyze_btn = gr.Button("🔍 Analyze Link")
+
+            output_summary = gr.Markdown()
+            output_iocs = gr.HTML()
+            download_user_ioc = gr.File(label="Download IOCs", interactive=False, visible=False)
+
+            def analyze_link(url):
+                from processors.ioc_extractor import extract_iocs
+                from processors.gemini_summarizer import summarize_with_gemini
+                import requests, re, tempfile
+                from bs4 import BeautifulSoup
+                from bs4 import XMLParsedAsHTMLWarning
+                import warnings
+                warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+
+                try:
+                    response = requests.get(url, timeout=10)
+                    soup = BeautifulSoup(response.text, "html.parser")
+                    title = soup.title.string.strip() if soup.title else "Untitled"
+                    paragraphs = soup.find_all('p')
+                    content = "\n".join(p.get_text() for p in paragraphs)
+                    if not content.strip():
+                        return "❌ No readable content found", "", ""
+                except Exception as e:
+                    return f"❌ Failed to fetch article: {e}", "", ""
+
+                summary = summarize_with_gemini(content, url)
+                iocs = extract_iocs(content)
+
+                details_html = ""
+                if iocs["ipv4"]:
+                    details_html += f"<details><summary>IPv4 ({len(iocs['ipv4'])})</summary><ul>" + "".join(f"<li>{ip}</li>" for ip in iocs["ipv4"]) + "</ul></details>"
+                if iocs["url"]:
+                    details_html += f"<details><summary>URL ({len(iocs['url'])})</summary><ul>" + "".join(f"<li>{u}</li>" for u in iocs["url"]) + "</ul></details>"
+                if iocs["hash"]:
+                    details_html += f"<details><summary>Hash ({len(iocs['hash'])})</summary><ul>" + "".join(f"<li>{h}</li>" for h in iocs["hash"]) + "</ul></details>"
+
+                # Save IOCs to file
+                safe_title = re.sub(r"[^a-zA-Z0-9]", "_", title)[:30]
+                temp_path = os.path.join(tempfile.gettempdir(), f"user_iocs_{safe_title}.txt")
+
+                try:
+                    with open(temp_path, "w") as f:
+                        f.write(f"Title: {title}\nLink: {url}\n\nSummary:\n{summary}\n\nIOCs:\n")
+                        for typ, items in iocs.items():
+                            if items:
+                                f.write(f"\n{typ.upper()}:\n" + "\n".join(items))
+                except Exception as e:
+                    print(f"❌ Failed to write IOCs file: {e}")
+                    temp_path = ""
+
+                return summary, details_html, temp_path
+
+            analyze_btn.click(analyze_link, inputs=[user_article_url], outputs=[output_summary, output_iocs, download_user_ioc])
+            download_user_ioc.change(lambda x: gr.update(visible=True), inputs=download_user_ioc, outputs=download_user_ioc)
+        # 🔹 Pipeline Refresh Section
         with gr.Accordion("🔁 Refresh Feeds + Re-Summarize", open=False):
             gr.Markdown("Will re-fetch feeds and re-run summaries using Ollama.")
             refresh_btn = gr.Button("🚀 Run Pipeline")
             refresh_btn.click(fn=refresh_pipeline, outputs=[])
-
-        app.load(render_summary_cards, inputs=[query, sort, group], outputs=results)
-
     return app
+
 
 if __name__ == "__main__":
     build_ui().launch()
