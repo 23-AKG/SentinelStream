@@ -68,7 +68,7 @@ sentinelstream/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/sentinelstream.git
+git clone https://github.com/23-AKG/sentinelstream.git
 cd sentinelstream
 ```
 
